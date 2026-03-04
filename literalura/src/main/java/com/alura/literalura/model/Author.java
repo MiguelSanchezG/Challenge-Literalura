@@ -14,6 +14,7 @@ public class Author {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
+    @Column(unique = true)
     private String name;
     private Integer birth_year;
     private Integer death_year;
@@ -77,24 +78,4 @@ public class Author {
                 ", death_year=" + death_year;
     }
 
-    public void imprimir(){
-        System.out.println("Autor: "+name);
-        System.out.println("Fecha nacimiento: "+birth_year);
-        System.out.println("Fecha de fallecimiento: "+death_year);
-        System.out.print("[");
-        imprimirLibros();
-        System.out.print("]");
-        System.out.println();
-    }
-
-    public void imprimirLibros(){
-        if(!books.isEmpty()){
-            for(Book book: books){
-                System.out.print(" "+book.getTitle());
-            }
-        }
-        else{
-            System.out.println();
-        }
-    }
 }

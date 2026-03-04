@@ -3,9 +3,11 @@ package com.alura.literalura.principal;
 //import com.alura.literalura.model.Book;
 import com.alura.literalura.dto.BookDTO;
 import com.alura.literalura.dto.InfoDTO;
+import com.alura.literalura.model.Author;
 import com.alura.literalura.model.Book;
 import com.alura.literalura.model.DatosInfo;
 //import com.alura.literalura.model.DatosLibro;
+import com.alura.literalura.repository.AuthorRepository;
 import com.alura.literalura.repository.BookRepository;
 import com.alura.literalura.service.ConsumoAPI;
 import com.alura.literalura.service.ConvierteDatos;
@@ -19,10 +21,12 @@ public class Principal {
     private final String URL_BASE = "https://gutendex.com/books/?search=";
     private ConvierteDatos conversor = new ConvierteDatos();
     private BookRepository repository;
+    private AuthorRepository authorRepository;
     private List<Book> libros;
 
-    public Principal(BookRepository repository) {
+    public Principal(BookRepository repository, AuthorRepository authorRepository) {
         this.repository = repository;
+        this.authorRepository = authorRepository;
     }
 
     public void muestraElMenu(){
@@ -88,15 +92,58 @@ public class Principal {
     }
 
     private void listarAutoresRegistrados(){
-
+            List<Author> autores= authorRepository.findAutorYLibros();
+            List<Book> libros;
+            for(Author a: autores){
+                System.out.println("Autor: "+ a.getName());
+                System.out.println("Fecha de nacimiento: "+ a.getBirth_year());
+                System.out.println("Fecha de fallecimiento: "+a.getDeath_year());
+                System.out.print("Libros: [");
+                libros = a.getBooks();
+                for(int i=0; i< libros.size(); i++){
+                    System.out.print(libros.get(i).getTitle());
+                    System.out.print(i<libros.size()-1? ", ":"");
+                }
+                System.out.print("]");
+                System.out.println();
+            }
     }
 
     private void listarAutoresVivos(){
+        System.out.println("Ingresa el año vivo de autor(es) que desea buscar");
+        Integer year = teclado.nextInt();
+        List<Author> autores= authorRepository.findAutoresVivosSegunAnio(year);
+        List<Book> libros;
+        for(Author a: autores){
+            System.out.println("Autor: "+ a.getName());
+            System.out.println("Fecha de nacimiento: "+ a.getBirth_year());
+            System.out.println("Fecha de fallecimiento: "+a.getDeath_year());
+            System.out.print("Libros: [");
+            libros = a.getBooks();
+            for(int i=0; i< libros.size(); i++){
+                System.out.print(libros.get(i).getTitle());
+                System.out.print(i<libros.size()-1? ", ":"");
+            }
+            System.out.print("]");
+            System.out.println();
+        }
 
     }
 
     private void listarLibrosIdioma(){
-
+        System.out.println("Que idioma deseas buscar");
+        System.out.println("""
+                es - español
+                en - ingles
+                fr - frances
+                pt - portugues
+                """);
+        var idioma = teclado.nextLine();
+        List<Book> libros = repository.findAutorPorIdioma(idioma);
+        System.out.println(libros);
+        for(Book b: libros){
+            b.imprimir();
+        }
     }
 
     private BookDTO getDatosLibro() {
