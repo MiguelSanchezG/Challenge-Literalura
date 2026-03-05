@@ -1,11 +1,14 @@
 package com.alura.literalura.repository;
 
+import com.alura.literalura.model.Author;
 import com.alura.literalura.model.Book;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 public interface BookRepository extends JpaRepository<Book,Long> {
     @Query("""
@@ -15,5 +18,6 @@ public interface BookRepository extends JpaRepository<Book,Long> {
        """)
     List<Book> findAutorPorIdioma(@Param("idioma") String idioma);
 
+    Optional<Book> findByTitle(String titulo);
 
 }

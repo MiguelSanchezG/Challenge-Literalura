@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -20,15 +21,16 @@ public class Book {
     private Long Id;
     @Column(unique = true)
     private String title;
-    private List<String> languages;
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Set<String> languages;
     private Double download_count;
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "obras",
             joinColumns = @JoinColumn(name="book_id"),
             inverseJoinColumns = @JoinColumn(name = "author_id")
     )
-    private List<Author> authors = new ArrayList<>();
+    private Set<Author> authors = new HashSet<>();
 
     public Book(){
 
@@ -38,10 +40,6 @@ public class Book {
         this.title = bookDTO.titulo();
         this.languages = bookDTO.idioma();
         this.download_count = bookDTO.numeroDescargas();
-        this.authors = bookDTO.authors()
-                .stream()
-                .map(Author::new)
-                .toList();
     }
 
     public Long getId() {
@@ -60,11 +58,11 @@ public class Book {
         this.title = title;
     }
 
-    public List<String> getLanguages() {
+    public Set<String> getLanguages() {
         return languages;
     }
 
-    public void setLanguages(List<String> languages) {
+    public void setLanguages(Set<String> languages) {
         this.languages = languages;
     }
 
@@ -76,11 +74,11 @@ public class Book {
         this.download_count = download_count;
     }
 
-    public List<Author> getAuthors() {
+    public Set<Author> getAuthors() {
         return authors;
     }
 
-    public void setAuthors(List<Author> authors) {
+    public void setAuthors(Set<Author> authors) {
         this.authors = authors;
     }
 
@@ -94,28 +92,5 @@ public class Book {
                 ", authors=" + authors ;
     }
 
-
-    public void imprimir(){
-        System.out.println("----- LIBRO -----");
-        System.out.println(" Titulo: "+title);
-        System.out.print(" Autor:");
-        imprimirAutores();
-        System.out.println();
-        System.out.println(" Idioma: "+String.join(", ", languages));
-        System.out.println(" Numero de descargas: "+download_count);
-        System.out.println();
-
-    }
-
-    public void imprimirAutores(){
-        if(!authors.isEmpty()){
-            for(Author author: authors){
-                System.out.print(" "+author.getName());
-            }
-        }
-        else{
-            System.out.println();
-        }
-    }
 
 }

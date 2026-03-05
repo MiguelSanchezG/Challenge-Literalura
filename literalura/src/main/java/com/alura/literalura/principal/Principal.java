@@ -1,19 +1,17 @@
 package com.alura.literalura.principal;
 
 //import com.alura.literalura.model.Book;
+import com.alura.literalura.dto.AuthorDTO;
 import com.alura.literalura.dto.BookDTO;
-import com.alura.literalura.dto.InfoDTO;
 import com.alura.literalura.model.Author;
 import com.alura.literalura.model.Book;
-import com.alura.literalura.model.DatosInfo;
 //import com.alura.literalura.model.DatosLibro;
 import com.alura.literalura.repository.AuthorRepository;
 import com.alura.literalura.repository.BookRepository;
 import com.alura.literalura.service.ConsumoAPI;
 import com.alura.literalura.service.ConvierteDatos;
 
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Principal {
     private Scanner teclado = new Scanner(System.in);
@@ -22,7 +20,8 @@ public class Principal {
     private ConvierteDatos conversor = new ConvierteDatos();
     private BookRepository repository;
     private AuthorRepository authorRepository;
-    private List<Book> libros;
+    private Set<Book> libros;
+    private Set<Author> autores;
 
     public Principal(BookRepository repository, AuthorRepository authorRepository) {
         this.repository = repository;
@@ -73,59 +72,97 @@ public class Principal {
         }
     }
     private void buscarTituloLibro() {
-        BookDTO bookDTO = getDatosLibro();
-        if(bookDTO==null){
-            System.out.println("No existe ese libro");
-        }else{
+        try{
+            BookDTO bookDTO = getDatosLibro();
+            Optional<Book> libroExistente = repository.findByTitle(bookDTO.titulo());
+            if(libroExistente.isPresent()){
+                System.out.println("Libro ya existe en la base de datos");
+                return;
+            }
             Book libro = new Book(bookDTO);
+            autores = new HashSet<>();
+            Author autorCrear;
+            for(AuthorDTO authorDTO: bookDTO.authors()){
+                Optional<Author> autor = authorRepository.findByName(authorDTO.name());
+                if(autor.isPresent()){
+                    autorCrear = autor.get();
+                }
+                else{
+                    autorCrear = authorRepository.save(new Author(authorDTO));
+                }
+                autores.add(autorCrear);
+            }
+
+            libro.setAuthors(autores);
             repository.save(libro);
-            libro.imprimir();
+            System.out.println("----- LIBRO -----");
+            System.out.println(" Titulo: "+libro.getTitle());
+            System.out.print(" Autor:");
+            autores.stream().forEach(a -> System.out.print(a.getName()+" "));
+            System.out.println();
+            System.out.println(" Idioma: "+String.join(", ", libro.getLanguages()));
+            System.out.println(" Numero de descargas: "+libro.getDownload_count());
+            System.out.println();
+
+
         }
+        catch (Exception e){
+            System.out.println("No existe ese libro");
+        }
+
 
     }
 
     private void listarLibrosRegistrados() {
-        libros = repository.findAll();
+        List<Book> libro = repository.findAll();
 
-        libros.stream()
-                .forEach(l-> l.imprimir());
+        for(Book b: libro){
+            System.out.println("----- LIBRO -----");
+            System.out.println(" Titulo: "+b.getTitle());
+            System.out.print(" Autor:");
+            autores.stream().forEach(a -> System.out.print(a.getName()+" "));
+            System.out.println();
+            System.out.println(" Idioma: "+String.join(", ", b.getLanguages()));
+            System.out.println(" Numero de descargas: "+b.getDownload_count());
+        }
+
     }
 
     private void listarAutoresRegistrados(){
-            List<Author> autores= authorRepository.findAutorYLibros();
-            List<Book> libros;
-            for(Author a: autores){
-                System.out.println("Autor: "+ a.getName());
-                System.out.println("Fecha de nacimiento: "+ a.getBirth_year());
-                System.out.println("Fecha de fallecimiento: "+a.getDeath_year());
-                System.out.print("Libros: [");
-                libros = a.getBooks();
-                for(int i=0; i< libros.size(); i++){
-                    System.out.print(libros.get(i).getTitle());
-                    System.out.print(i<libros.size()-1? ", ":"");
-                }
-                System.out.print("]");
-                System.out.println();
-            }
-    }
-
-    private void listarAutoresVivos(){
-        System.out.println("Ingresa el año vivo de autor(es) que desea buscar");
-        Integer year = teclado.nextInt();
-        List<Author> autores= authorRepository.findAutoresVivosSegunAnio(year);
-        List<Book> libros;
+        List<Author> autores = authorRepository.findAll();
+        Set<Book> libros;
         for(Author a: autores){
+            System.out.println("----------------------");
             System.out.println("Autor: "+ a.getName());
             System.out.println("Fecha de nacimiento: "+ a.getBirth_year());
             System.out.println("Fecha de fallecimiento: "+a.getDeath_year());
             System.out.print("Libros: [");
             libros = a.getBooks();
-            for(int i=0; i< libros.size(); i++){
-                System.out.print(libros.get(i).getTitle());
-                System.out.print(i<libros.size()-1? ", ":"");
+            for(Book b: libros){
+                System.out.print(b.getTitle());
+                System.out.print(", ");
             }
-            System.out.print("]");
-            System.out.println();
+            System.out.println("]");
+        }
+}
+
+    private void listarAutoresVivos(){
+        System.out.println("Ingresa el año vivo de autor(es) que desea buscar");
+        Integer year = teclado.nextInt();
+        Set<Author> autores = authorRepository.findAutoresVivosSegunAnio(year);
+        Set<Book> libros ;
+        for(Author a: autores){
+            System.out.println("----------------------");
+            System.out.println("Autor: "+ a.getName());
+            System.out.println("Fecha de nacimiento: "+ a.getBirth_year());
+            System.out.println("Fecha de fallecimiento: "+a.getDeath_year());
+            System.out.print("Libros: [");
+            libros = a.getBooks();
+            for(Book b: libros){
+                System.out.print(b.getTitle());
+                System.out.print(", ");
+            }
+            System.out.println("]");
         }
 
     }
@@ -140,9 +177,14 @@ public class Principal {
                 """);
         var idioma = teclado.nextLine();
         List<Book> libros = repository.findAutorPorIdioma(idioma);
-        System.out.println(libros);
         for(Book b: libros){
-            b.imprimir();
+            System.out.println("----- LIBRO -----");
+            System.out.println(" Titulo: "+b.getTitle());
+            System.out.print(" Autor:");
+            autores.stream().forEach(a -> System.out.print(a.getName()+" "));
+            System.out.println();
+            System.out.println(" Idioma: "+String.join(", ", b.getLanguages()));
+            System.out.println(" Numero de descargas: "+b.getDownload_count());
         }
     }
 
@@ -154,7 +196,6 @@ public class Principal {
             return null;
         }
         BookDTO libro = conversor.obtenerPrimerResultado(json, BookDTO.class);
-        System.out.println(libro);
         return libro;
     }
 
