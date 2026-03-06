@@ -21,15 +21,15 @@ https://github.com/MiguelSanchezG/Challenge-Literalura
 
 1. Primero es necesario crear la base de datos, esto para evitar algun error al compilar la aplicacion. solo hay que ir al pgAdmin, luego se da click derecho a la opcion postgreSQL17, esto muestra un pequeño menu, donde seleccionaremos Create, y seleccionamos Database.
 
-![CreandoBase](./imagenes/creandoBase.jpg)
+![CreandoBase](./Imagenes/creandoBase.jpg)
 
 2. Nos saltara una pequeña ventana, y simplemente pondremos el nombre, que en este caso seria literalura y le damos a save
 
-![nombreBase](./imagenes/nombreBase.jpg)
+![nombreBase](./Imagenes/nombreBase.jpg)
 
 3. tambien se muestran ciertas consultas que pueden servir, para reiniciar la base de datos de cero, y sobretodo verificar informacion
 
-![algunosComandos](./imagenes/algunosComandos.jpg)
+![algunosComandos](./Imagenes/algunosComandos.jpg)
 
 4. por ultimo vamos a abrir el proyecto con nuestra IDE de preferencia, en este caso se usa IntelliJ, luego buscamos el archivo application.properties, esto para definir cierta informacion necesaria, en este caso, para la prueba, se puede reemplazar.
    +{DB_HOST} por localhost:8080
@@ -37,43 +37,43 @@ https://github.com/MiguelSanchezG/Challenge-Literalura
    +{DB_USER} por el usuario que definimos en al iniciar por primera vez el pgAdmin
    +{DB_PASSWORD} por la contraseña que definimos con ese nombre
 
-![configuracionDB](./imagenes/configuracionDB.jpg)
+![configuracionDB](./Imagenes/configuracionDB.jpg)
 
 5. Ahora volvemos a las carpetas del proyecto y buscamos la clase LiteraluraApplication
 
-![claseProyecto](./imagenes/claseProyecto.jpg)
+![claseProyecto](./Imagenes/claseProyecto.jpg)
 
 6. Entonces le daremos click derecho en la clase y buscamos la opcion que dice Run
 
-![iniciarApp](./imagenes/iniciarApp.jpg)
+![iniciarApp](./Imagenes/iniciarApp.jpg)
 
 7. y ahi empezara la app con las siguientes 6 opciones.
 
-![menu](./imagenes/menu.jpg)
+![menu](./Imagenes/menu.jpg)
 
 8. La primera opcion nos da la opcion de poner el nombre del libro que deseamos buscar, y nos muestra su informacion relacionada.
 
-![Consulta1](./imagenes/Consulta1.jpg)
-![Resultado1](./imagenes/Resultado1.jpg)
+![Consulta1](./Imagenes/Consulta1.jpg)
+![Resultado1](./Imagenes/Resultado1.jpg)
 
 9. la segunda opcion nos muestra todos los libros que llevamos guardando
 
-![resultado2](./imagenes/resultado2.jpg)
+![resultado2](./Imagenes/resultado2.jpg)
 
 10. la tercera nos muestra los autores y sus libros
 
-![resultado3](./imagenes/resultado3.jpg)
+![resultado3](./Imagenes/resultado3.jpg)
 
 11. con la cuarta se busca con la fecha proporcionada que autores estaban vivos en esa epoca
 
-![Consulta4](./imagenes/Consulta4.jpg)
-![resultado4](./imagenes/resultado4.jpg)
+![Consulta4](./Imagenes/Consulta4.jpg)
+![resultado4](./Imagenes/resultado4.jpg)
 
 12. con la quinta opcion se busca segun el idioma
 
-![Consulta5](./imagenes/Consulta5.jpg)
-![resultado5](./imagenes/resultado5.jpg)
+![Consulta5](./Imagenes/Consulta5.jpg)
+![resultado5](./Imagenes/resultado5.jpg)
 
 13. y la ultima opcion cerraria la app
 
-![cerrando](./imagenes/cerrando.jpg)
+![cerrando](./Imagenes/cerrando.jpg)
